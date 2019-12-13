@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>My 카테고리 조회 </title>
+  <body>
+      <div>
+      <form action="{% url 'UpdateCategoryname1' %}" method="POST">
+        {% csrf_token %}
+        <tr height="100">
+          <td width="200" font>변경할 카테고리명</td>
+          <td><input type="text" name="categoryname" size="50"></td>
+          <td><button href="#" type="submit" size="50">save</button></td>
+        </tr>
+        <tr>
+        {% for categoryinfo1 in categoryinfo %}
+          <input type="hidden" name="categoryid" value="{{ categoryinfo1.categoryid }}">
+        {% endfor %}
+        </tr>
+        </form>
+      </div>
+  </body>
+</html>

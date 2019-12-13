@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>credu369 video-upload</title>
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+      <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' type='text/css'>
+  </head>
+  <body>
+    <section class="jumbotron">
+      <div class="container">
+        <form action="{% url 'upload_video' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+            <table>
+              <p align="center">
+                <button href="#" type="submit" value="upload" class="upload" size="50">Video Upload</button>
+              </p>
+              <tr height="100">
+                <td width="200">업로드할 영상 파일을 선택하세요</td>
+                <td><input type="file" name="videofile"></td>
+              </tr>
+              <tr height="100">
+                <td width="200">업로드할 영상의 제목을 입력하세요</td>
+                <td><input type="text" name="videotitle" size="80"></td>
+              </tr>
+              <tr height="100">
+                <td width="200">업로드할 영상의 설명을 입력하세요</td>
+                <td><textarea name="videodescription" cols="80" rows="10"></textarea></td>
+              </tr>
+            </table>
+        </form>
+      </div>
+    </section>
+  </body>
+</html>

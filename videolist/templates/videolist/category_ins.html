@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>My 카테고리 만들기 </title>
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+      <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' type='text/css'>
+  </head>
+  <body>
+    <form action="{% url 'SaveCategoryinfo' %}" method="POST" target="_blank">
+      {% csrf_token %}
+        <table>
+          <tr height="100">
+            <td width="200" font>카테고리명을 입력하세요</td>
+            <td><input type="text" name="category" size="50"></td>
+            <td><button href="#" type="submit" size="50">save</button></td>
+          </tr>
+        </table>
+          <table>
+          <tr>
+            <td width="150">동영상 썸네일</td>
+            <td width="300">동영상 제목</td>
+            <td width="100">동영상 보기</td>
+          </tr>
+        {% for video in videos %}
+          <tr height="100">
+            <input type="hidden" name="videoid" value="{{ video.id }}">
+            <td><img class="bd-placeholder-img" widths="10%" height="100" src="{{ video.thumbnail }}"></td>
+            <td class="video-title">{{ video.title }}</td>
+            <td><a type="button" href="{{ video.url }}" class="btn btn-outline-secondary" target="_blank">View Video</a></td>
+          </tr>
+        {% endfor %}
+      </table>
+    </form>
+  </body>
+</html>

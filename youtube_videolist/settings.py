@@ -25,8 +25,7 @@ SECRET_KEY = '!(f(1ad$+#3=0f=6*_$7s&_lgbf&e-b$4ce-#hw3r4_w^8jnbk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['192.168.0.217', '127.0.0.1']
 
 # Application definition
 
@@ -122,3 +121,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 YOUTUBE_DATA_API_KEY = 'AIzaSyAQZQHhigfJLwdqviugo3G7Yda1AYJgzP0'
+GOOGLE_OAUTH2_CLIENT_ID = '401196398643-7n5fegnrm0e2ptti9c5nus8l5mr3o8aq.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'uSAC9nbH52HCZiWimMhbNUYx'

@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>credu369 videolist</title>
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+      <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' type='text/css'>
+      <link rel="stylesheet" href="{% static 'videolist/video.css' %}">
+  </head>
+  <body>
+    <section class="creative text-center">
+      <div class="container">
+        <h1 class="creative-heading">유튜브 동영상 검색</h1>
+        <h2><p class"lead text-muted">유튜브에서 검색조건에 맞는 상위 30개 동영상을 가져옵니다.</p></h2>
+        <form method="POST">
+        <div class="input-group mb-3">
+          {% csrf_token %}
+            <input type="text" name="search" class="form-control" aria-label="Username" size="60">
+          <p>
+            <button href="#" type="submit" class="btn btn-primary my-2">Youtube Search</button>
+          </p>
+            <a class="btn btn-default" href="{% url 'upload_v' %}" target="_blank">Youtube Upload</a>
+            <a class="btn btn-default" href="{% url 'Mycategoryview' %}" target="_blank">My Category 조회</a>
+        </div>
+        </form>
+      </div>
+    </section>
+    <section>
+      <table>
+        <div>
+        <form action="{% url 'InsertCategoryinfo' %}" method="POST" target="_blank">
+          {% csrf_token %}
+            <p><button href="#" type="submit" class="btn btn-primary my-2">My Category 생성</button></p>
+            {% for video in videos %}
+              <tr height="100">
+                <td width="30"><input type="checkbox" name="chkbox" value="{{ video.id }}"></td>
+                <td><img class="bd-placeholder-img" widths="10%" height="100" src="{{ video.thumbnail }}"></td>
+                <td class="video-title" width="200">{{ video.title }}</td>
+                <td class="video-duration">{{ video.description }}</td>
+                <td><a type="button" href="{{ video.url }}" class="btn btn-outline-secondary" target="_blank">View Video</a></td>
+                <td>{{ video.duration }}&nbsp;mins</td>
+              </tr>
+            {% endfor %}
+        </form>
+        </div>
+      </table>
+    </section>
+  </body>
+</html>

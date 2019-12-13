@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>My 카테고리 조회 </title>
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+      <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' type='text/css'>
+  </head>
+  <body>
+    <section>
+      <div>
+      <form action="{% url 'UpdateCategoryname' %}" method="POST" target="_blank">
+      {% csrf_token %}
+        <br>
+        <tr><td><button href="#" type="submit" class="btn btn-default">Category명 바꾸기</button></td></tr>
+        <table>
+          <tr  style="background-color:#01DF01">
+            <td width="50">선택</td>
+            <td width="150">카테고리명</td>
+            <td width="300">동영상 제목</td>
+            <td width="150">동영상 썸네일</td>
+            <td width="100">동영상 보기</td>
+          </tr>
+          <br>
+        {% for mycategory in mycategorys %}
+          <tr height="100">
+            {% if mycategory.categoryname == '' %}
+              <td width="50">&nbsp;</td>
+            {% else %}
+              <td width="50"><input type="checkbox" name="chkbox" value="{{ mycategory.categoryid }}"></td>
+            {% endif %}
+            <td>{{ mycategory.categoryname }}</td>
+            <td class="video-title">{{ mycategory.videotitle }}</td>
+            <td><img class="bd-placeholder-img" widths="10%" height="100" src="{{ mycategory.thumbnailurl }}"></td>
+            <td><a type="button" href="{{ mycategory.videourl }}" class="btn btn-outline-secondary" target="_blank">View Video</a></td>
+          </tr>
+        {% endfor %}
+        </table>
+      </form>
+      </div>
+    </section>
+  </body>
+</html>
