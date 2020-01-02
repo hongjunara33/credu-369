@@ -46,7 +46,6 @@ def index(request):
         for result in results:
             video_ids.append(result['id']['videoId'])
 
-
         video_params = {
             'key' : settings.YOUTUBE_DATA_API_KEY,
             'part' : 'snippet,contentDetails',
@@ -57,7 +56,6 @@ def index(request):
         r = requests.get(video_url, params=video_params)
 
         results = r.json()['items']
-
 
         for result in results:
             video_data = {
@@ -71,17 +69,15 @@ def index(request):
 
             videos.append(video_data)
 
-
     context = {
         'videos' : videos
     }
 
     return render(request, 'videolist/index.html', context)
 
-def InsertCategoryinfo(request):
+def CreateCategoryinfo(request):
 
     vids = []
-    name1 = []
     videos = []
 
     if request.method == 'POST':
@@ -118,20 +114,120 @@ def InsertCategoryinfo(request):
 
             videos.append(video_data)
 
-            Videoinfo(vid=vid, title=title, thumbnailurl=thumbnailurl, videourl=videourl, duration=duration, description=description).save()
+            if Videoinfo.objects.filter(vid=vid).exists():
+                print("The Videoid already exists : %s" % vid)
+            else:
+                Videoinfo(vid=vid, title=title, thumbnailurl=thumbnailurl, videourl=videourl, duration=duration, description=description).save()
 
     context = {
          'videos' : videos
     }
-    return render(request, 'videolist/category_ins.html', context)
+    return render(request, 'videolist/createcategory.html', context)
 
 def Mycategoryview(request):
     categorys = []
     mycategorys = []
     vinfo = []
 
-    rd = Mylearninginfo.objects.filter(userid='tag2')
-    categorys = rd.values()
+    qs = Mylearninginfo.objects.filter(userid='tag2')
+    categorys = qs.values()
+
+    i = 0
+    while i < len(categorys):
+        vid=categorys[i]['videoid']
+
+        if(i > 0 and (categorys[i-1]['categoryname']==categorys[i]['categoryname'])):
+            cname = ""
+        else:
+            cname=categorys[i]['categoryname']
+
+        cid = categorys[i]['categoryid']
+        qs1 = Videoinfo.objects.filter(vid=vid)
+        vinfo = qs1.values()
+
+        if(vinfo is None):
+            i = i + 1
+        else:
+            mycategory_data = {
+               'categoryname' : cname,
+               'categoryid' : cid,
+               'videoid' : vid,
+               'videotitle' : vinfo[0]['title'],
+               'thumbnailurl' : vinfo[0]['thumbnailurl'],
+               'videourl' : vinfo[0]['videourl']
+            }
+            mycategorys.append(mycategory_data)
+            i = i + 1
+
+    context = {
+                'mycategorys' : mycategorys
+            }
+
+    return render(request, 'videolist/mycategoryview.html', context)
+
+
+def SaveCategoryinfo(request):
+
+    videoids = []
+
+    if request.method == 'POST':
+        cname = request.POST.get("category")
+        videoids = request.POST.getlist("videoid")
+        now = datetime.datetime.now()
+        nowDate = now.strftime('%Y%m%d')
+        nowDatetime = now.strftime('%Y%m%d%H%M%S')
+        categoryid = 'c' + nowDatetime
+
+        for videoid in videoids:
+            Mylearninginfo(userid='tag2', videoid=videoid, categoryid=categoryid, categoryname=cname).save()
+
+    return render(request, 'videolist/index.html')
+
+def UpdateCategoryname(request):
+
+    categoryids = []
+    categoryinfo = []
+    if request.method == 'POST':
+        categoryids = request.POST.getlist("chkbox")
+
+        if len(categoryids) == 0:
+            categoryid = "NoSel"
+            categoryname = "NoSel"
+        elif  len(categoryids) >= 2:
+            categoryid = "TooMuch"
+            categoryname = "TooMuch"
+        else:
+            categoryid = categoryids[0]
+            qs = Mylearninginfo.objects.filter(categoryid=categoryid)
+            mlinfo = qs.values()
+            categoryname = mlinfo[0]['categoryname']
+
+        category_info = {
+            'categoryid' : categoryid,
+            'categoryname' : categoryname
+            }
+        categoryinfo.append(category_info)
+
+    context = {
+            'categoryinfo' : categoryinfo
+            }
+
+    return render(request, 'videolist/updatecategoryname.html', context)
+
+def UpdateCategoryname1(request):
+
+    if request.method == 'POST':
+        categoryname = request.POST.get("categoryname")
+        categoryid = request.POST.get("categoryid")
+
+        Mylearninginfo.objects.filter(categoryid=categoryid).update(categoryname=categoryname)
+
+    categorys = []
+    vinfo = []
+    mycategorys = []
+    qs = Mylearninginfo.objects.filter(userid='tag2')
+    categorys = qs.values()
+
     i = 0
     while i < len(categorys):
         vid=categorys[i]['videoid']
@@ -141,8 +237,8 @@ def Mycategoryview(request):
             cname=categorys[i]['categoryname']
 
         cid = categorys[i]['categoryid']
-        rd1 = Videoinfo.objects.filter(vid=vid)
-        vinfo = rd1.values()
+        qs1 = Videoinfo.objects.filter(vid=vid)
+        vinfo = qs1.values()
         mycategory_data = {
            'categoryname' : cname,
            'categoryid' : cid,
@@ -157,75 +253,91 @@ def Mycategoryview(request):
     context = {
                 'mycategorys' : mycategorys
             }
+
     return render(request, 'videolist/mycategoryview.html', context)
 
+def DeleteCategory(request):
+    categorys = []
+    mycategorys = []
+    vinfo = []
 
-def SaveCategoryinfo(request):
+    qs = Mylearninginfo.objects.filter(userid='tag2')
+    categorys = qs.values()
 
-    videoids = []
-    if request.method == 'POST':
-        cname = request.POST.get("category")
-        videoids = request.POST.getlist("videoid")
-        now = datetime.datetime.now()
-        nowDate = now.strftime('%Y%m%d')
-        nowDatetime = now.strftime('%Y%m%d%H%M%S')
-        print(nowDatetime)
+    i = 0
+    while i < len(categorys):
+        vid=categorys[i]['videoid']
 
-        categoryid = 'c' + nowDatetime
-        for videoid in videoids:
-            Mylearninginfo(userid='tag2', videoid=videoid, categoryid=categoryid, categoryname=cname).save()
-
-    return render(request, 'videolist/index.html')
-
-def UpdateCategoryname(request):
-
-    categoryids = []
-    categoryinfo = []
-    if request.method == 'POST':
-        categoryids = request.POST.getlist("chkbox")
-
-        if len(categoryids) == 0:
-            print('변경할 카테고리를 선택하세요')
-        elif  len(categoryids) >= 2:
-            print('변경할 카테고리는 하나만 선택하세요')
+        if(i > 0 and (categorys[i-1]['categoryname']==categorys[i]['categoryname'])):
+            cname = ""
         else:
-            categoryid = categoryids[0]
-            rd = Mylearninginfo.objects.filter(categoryid=categoryid)
-            mlinfo = rd.values()
-            categoryname = mlinfo[0]['categoryname']
-            category_info = {
-                'categoryid' : categoryid,
-                'categoryname' : categoryname
-            }
-            categoryinfo.append(category_info)
-            print(categoryinfo)
-    context = {
-        'categoryinfo' : categoryinfo
-    }
+            cname=categorys[i]['categoryname']
 
-    return render(request, 'videolist/updatecategoryname.html', context)
+        cid = categorys[i]['categoryid']
+        qs1 = Videoinfo.objects.filter(vid=vid)
+        vinfo = qs1.values()
 
-def UpdateCategoryname1(request):
-
-    if request.method == 'POST':
-        categoryname = request.POST.get("categoryname")
-        categoryid = request.POST.get("categoryid")
-        print(categoryname)
-        print(categoryid)
-
-        Mylearninginfo.objects.filter(categoryid=categoryid).update(categoryname=categoryname)
-
-        mycategorys = []
-        rd = Mylearninginfo.objects.filter(categoryid=categoryid)
-        mycategorys = rd.values()
-        print(mycategorys)
+        mycategory_data = {
+           'categoryname' : cname,
+           'categoryid' : cid,
+           'videoid' : vid,
+           'videotitle' : vinfo[0]['title'],
+           'thumbnailurl' : vinfo[0]['thumbnailurl'],
+           'videourl' : vinfo[0]['videourl']
+        }
+        mycategorys.append(mycategory_data)
+        i = i + 1
 
     context = {
                 'mycategorys' : mycategorys
-    }
+            }
+    return render(request, 'videolist/deletecategory.html', context)
 
-    return render(request, 'videolist/mycategoryview.html')
+def DeleteCategory1(request):
 
+    categoryids = []
+
+    if request.method == 'POST':
+        categoryids = request.POST.getlist("chkbox")
+
+        for categoryid in categoryids:
+            dml = Mylearninginfo.objects.filter(categoryid=categoryid)
+            dml.delete()
+
+    categorys = []
+    vinfo = []
+    mycategorys = []
+    qs = Mylearninginfo.objects.filter(userid='tag2')
+    categorys = qs.values()
+
+    i = 0
+    while i < len(categorys):
+        vid=categorys[i]['videoid']
+        if(i > 0 and (categorys[i-1]['categoryname']==categorys[i]['categoryname'])):
+            cname = ""
+        else:
+            cname=categorys[i]['categoryname']
+
+        cid = categorys[i]['categoryid']
+        qs1 = Videoinfo.objects.filter(vid=vid)
+        vinfo = qs1.values()
+
+        mycategory_data = {
+           'categoryname' : cname,
+           'categoryid' : cid,
+           'videoid' : vid,
+           'videotitle' : vinfo[0]['title'],
+           'thumbnailurl' : vinfo[0]['thumbnailurl'],
+           'videourl' : vinfo[0]['videourl']
+        }
+        mycategorys.append(mycategory_data)
+        i = i + 1
+
+    context = {
+                'mycategorys' : mycategorys
+            }
+
+    return render(request, 'videolist/deletecategory.html', context)
 
 
 def upload_v(request):
@@ -233,7 +345,6 @@ def upload_v(request):
 
 def upload_video(request):
     if request.method == 'POST':
-        print('request is post')
         httplib2.RETRIES = 1
         MAX_RETRIES = 10
         RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, http.client.NotConnected,

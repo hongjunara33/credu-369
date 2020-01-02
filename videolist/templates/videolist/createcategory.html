@@ -8,16 +8,16 @@
       <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' type='text/css'>
   </head>
   <body>
-    <form action="{% url 'SaveCategoryinfo' %}" method="POST" target="_blank">
+    <form action="{% url 'SaveCategoryinfo' %}" method="POST" target="_parent">
       {% csrf_token %}
         <table>
           <tr height="100">
-            <td width="200" font>카테고리명을 입력하세요</td>
+            <td width="200">카테고리명을 입력하세요</td>
             <td><input type="text" name="category" size="50"></td>
             <td><button href="#" type="submit" size="50">save</button></td>
           </tr>
         </table>
-          <table>
+        <table>
           <tr>
             <td width="150">동영상 썸네일</td>
             <td width="300">동영상 제목</td>
@@ -31,7 +31,7 @@
             <td><a type="button" href="{{ video.url }}" class="btn btn-outline-secondary" target="_blank">View Video</a></td>
           </tr>
         {% endfor %}
-      </table>
+        </table>
     </form>
   </body>
 </html>

@@ -2,22 +2,36 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>My 카테고리 조회 </title>
+    <title>My 카테고리 변경</title>
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+      <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' type='text/css'>
+  </head>
   <body>
-      <div>
-      <form action="{% url 'UpdateCategoryname1' %}" method="POST">
-        {% csrf_token %}
-        <tr height="100">
-          <td width="200" font>변경할 카테고리명</td>
-          <td><input type="text" name="categoryname" size="50"></td>
-          <td><button href="#" type="submit" size="50">save</button></td>
-        </tr>
-        <tr>
-        {% for categoryinfo1 in categoryinfo %}
-          <input type="hidden" name="categoryid" value="{{ categoryinfo1.categoryid }}">
-        {% endfor %}
-        </tr>
-        </form>
-      </div>
+    <form action="{% url 'UpdateCategoryname1' %}" method="POST" target="_parent">
+      {% csrf_token %}
+      {% for categoryinfo1 in categoryinfo %}
+        {% if categoryinfo1.categoryid == 'NoSel' %}
+         <script>alert("변경할 카테고리가 선택되지 않았습니다. 변경할 카테고리를 선택하세요");window.close()</script>
+        {% elif categoryinfo1.categoryid == 'TooMuch' %}
+         <script>alert("변경할 카테고리를 2개이상 선택했습니다. 변경할 카테고리는 1개만 선택하세요");window.close()</script>
+        {% else %}
+          <table>
+          <tr height="100">
+            <td width="150" >변경전 카테고리명</td>
+            <input type="hidden" name="categoryid" value="{{ categoryinfo1.categoryid }}">
+            <td><input type="text" name="categoryname0" value="{{ categoryinfo1.categoryname }}" size="50"><td>
+          </tr>
+          </table>
+        {% endif %}
+      {% endfor %}
+      <table>
+      <tr height="100">
+        <td width="150"><font color="blue">변경할 카테고리명</font></td>
+        <td><input type="text" name="categoryname" size="50"></td>
+        <td><button href="#" type="submit" size="50">save</button></td>
+      </tr>
+      </table>
+    </form>
   </body>
 </html>
